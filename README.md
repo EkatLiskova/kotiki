@@ -9,5 +9,5 @@
 4. Установите необходимые библиотеки: pip install -r .\requirements.txt
 5. Создайте базу данных, ее название: Ksaitik
 6. Сделайте миграцию БД: python manage.py migrate
-7. Запустите сервер: python manage.py migrate
+7. Запустите сервер: python manage.py runserver
 8. Котики рулят
