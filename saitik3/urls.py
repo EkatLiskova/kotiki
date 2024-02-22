@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from cattest.views import TestViews
+from cattest.views import TestViews, RegisterViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('kotiki/', TestViews.as_view()),
+    path('reg/', RegisterViews.as_view()),
 ]
