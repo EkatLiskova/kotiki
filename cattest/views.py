@@ -1,14 +1,37 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cattest.models import Test
+from cattest.models import Test, Question
 
 
 class TestViews(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        answers = Test.objects.all().get(id=1).answers
-        return Response(data=answers, status=200)
+        username = request.user  # при обычном входе
+        id = User.objects.all().get(username=username).id
+        answers = Test.objects.all().get(id=id).answers
+        return HttpResponse(answers)
+
+
+class RegisterViews(APIView):
+    def post(self, request):
+        name = request.data.get('name') #при регистрации
+        mail = request.data.get('mail')
+        password = request.data.get('password')
+        User.objects.create_user(name, mail, password)
+        return Response(status=201)
+
+class QuestionViews(APIView):
+    def get(self, request):
+        number_of_question = request.data.get('number_of_question')
+        text_of_question = Question.objects.all().get(number_of_question=number_of_question).text_of_question
+        return Response(text_of_question)

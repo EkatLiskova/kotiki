@@ -12,6 +12,14 @@ class Test(models.Model):
         db_table = 'current_test'
 
 
+class Question(models.Model):
+    text_of_question = models.TextField()
+    number_of_question = models.IntegerField()
+
+    class Meta:
+        db_table = 'question'
+
+
 
 
 
