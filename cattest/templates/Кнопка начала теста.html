@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <title> Котики </title>
+    <link rel="icon" href="https://s1.iconbird.com/ico/2013/8/428/w256h2561377930298catwalk.png">
+    </head>
+    
+    <body> 
+    <div class = "Kotiki">
+        <div class = "Maintext">  <label class = "Zagolovok">Какой ты котик? </label>
+</div> 
+  <a href="#" class="button">Начать тест</a>
+</div>  
+</body></html><html>
+ 
+<style>
+.Kotiki {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-size: cover;
+  width: 100%;
+  height: 600px;
+  background-image: url('https://gas-kvas.com/uploads/posts/2023-03/1678092902_gas-kvas-com-p-krasivii-fon-na-risunke-kota-5.jpg');
+}
+.Maintext {
+  padding-top: 19px;
+  text-align: center;
+  background-color: rgba(184, 176, 182, 0.47);
+  width: 530px;
+  height: 60px;
+  margin-top: 2%;
+  margin-bottom: 3%;
+  /*     opacity: .7; */
+}
+label.Zagolovok {
+  font-size: 30px;
+  font-family: cursive;
+}
+.button {
+  text-align: center;
+  display: inline-block;
+  padding: 0.75rem 0.7rem;
+  padding-top: 19px;
+  border-radius: 10rem;
+  color: #fff;
+  font-family: cursive;
+  font-size: 1.04rem;
+  letter-spacing: 0.15rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  margin-top: 70px;
+  width: 230px;
+  height: 34px;
+}
+.button:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(166, 89, 129, 0.85);
+  border-radius: 10rem;
+  z-index: -2;
+}
+.button:before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: rgba(164, 65, 116, 0.49);
+  transition: all 0.3s;
+  border-radius: 10rem;
+  z-index: -1;
+}
+.button:hover {
+  color: #fff;
+}
+.button:hover:before {
+  width: 100%;
+}
+/* optional reset for presentation */
+* {
+  font-family: Arial;
+  text-decoration: none;
+  font-size: 20px;
+}
+h1 {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-bottom: 2rem;
+  color: #777;
+}
+
+</style>
+<script>
+
+</script>

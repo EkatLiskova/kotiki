@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cattest.models import Test
+from cattest.models import Test, Question
 
 
 class TestViews(APIView):
@@ -29,3 +29,9 @@ class RegisterViews(APIView):
         password = request.data.get('password')
         User.objects.create_user(name, mail, password)
         return Response(status=201)
+
+class QuestionViews(APIView):
+    def get(self, request):
+        number_of_question = request.data.get('number_of_question')
+        text_of_question = Question.objects.all().get(number_of_question=number_of_question).text_of_question
+        return Response(text_of_question)
