@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Test(models.Model):
+    '''Информаиця о прохождении тестирования конкретного пользователя'''
     type_of_kotik = models.IntegerField(null=True) #(null=True) пусто если тест не окончен
     current_question = models.IntegerField(default=1)
     user_id = models.IntegerField(null=False)
@@ -13,6 +14,7 @@ class Test(models.Model):
 
 
 class Question(models.Model):
+    category = models.TextField(blank=True, null=True)
     text_of_question = models.TextField()
     number_of_question = models.IntegerField()
 
