@@ -30,20 +30,34 @@ class RegisterViews(APIView):
         User.objects.create_user(name, mail, password)
         return Response(status=201)
 
+
 class QuestionViews(APIView):
-    def get(self, request):
-        number_of_question = request.data.get('number_of_question')
+
+    def get_question(self):
+        user_id = 1
+        number_of_question = Test.objects.all().get(user_id=user_id).current_question
         text_of_question = Question.objects.all().get(number_of_question=number_of_question).text_of_question
-        return Response(text_of_question)
+        return {'textik': text_of_question}
+
+    def get(self, request):
+        user_id = 1
+        user_test_info = Test.objects.all().get(user_id=user_id)
+        if user_test_info.current_question > 28:
+            return render(request, 'Результат теста.html')
+        return render(request, 'Прохождение теста.html', context=self.get_question())
 
     def post(self, request):
-        user_id = request.data.get('user_id')
+        user_id = 1
         user_test_info = Test.objects.all().get(user_id=user_id)
         button_answer = request.data.get('button_answer')
         user_test_info.answers = user_test_info.answers + button_answer
         user_test_info.current_question = user_test_info.current_question + 1
         user_test_info.save()
-        return Response(status=200)
+        if user_test_info.current_question <= 28:
+            return render(request, 'Прохождение теста.html', context=self.get_question())
+        else:
+            #тут будет вычисляться результат
+            return render(request, 'Результат теста.html')
 
 
 def result(answers):
@@ -61,6 +75,11 @@ def result(answers):
 
     is_active = True if active.count('1') > 3 else False
     is_communication = True if communication.count('1') > 3 else False
+
+class StartViews(APIView):
+    def get(self, request): #request это любые данные, которые передаются в запросе на сервер
+        return render(request, 'Кнопка начала теста.html')
+
 
 
 

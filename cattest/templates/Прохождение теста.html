@@ -10,10 +10,16 @@
         <div class = "Maintext">  
             <label class = "Zagolovok">Какой ты котик? </label>
 </div>
-        <Вопрос> 
+         <label> {{textik}} </label>
           <div class = "Image"></div>
-           <div class = "answers"> <a style="width:74px; height: 24px" href="#2" class="knopka2" >Да</a>
-          <a style="width:74px; margin-left: 14px; height: 24px" href="#2" class="knopka2" >Нет</a> </div> 
+           <div class = "answers">
+              <form method = 'post'>
+                  <input type="hidden" name="button_answer" value="1" />
+                  <a style="width:74px; height: 24px" href="#2" onclick="document.forms[0].submit();return false;" class="knopka2" >Да</a> </form>
+               <form method = 'post'>
+                   <input type="hidden" name="button_answer" value="2" />
+                   <a style="width:74px; margin-left: 14px; height: 24px" href="#2" onclick="document.forms[1].submit();return false;" class="knopka2" >Нет</a> </form>
+           </div>
           </div> 
 </div>  
       
