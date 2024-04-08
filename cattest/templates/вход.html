@@ -9,15 +9,17 @@
         <div class = "Maintext">  <label class = "Zagolovok">Добро пожаловать </label>
 <label class = "Zagolovok"> на тестирование котиковости <З </label>
 </div>
-        <form method = 'post'>
+
         <div class =  "Kredi">
             <label for="name">Вход Котики</label>
-            <div class = "Login"> <input type="text" id="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
-            <div class = "Password"> <input type="password" id="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+            <form method = 'post'> {% csrf_token %}  /* <- механизм защиты*/
+            <div class = "Login"> <input type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
+            <div class = "Password"> <input type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
 
-            <a href="#" onclick="document.forms[0].submit();return false;" class="knopka">Войти</a>
-            <a style="display:flex;width:170px; height: 24px" href="./регистрация.html"  onclick="document.forms[0].submit();return false;" class="knopka2" >Создать аккаунт</a>
- </div> </form> </div></body></html>
+            <a onclick="document.forms[0].submit();return false;" class="knopka">Войти</a>
+              </form> <form method = 'get' action={% url 'Регистрация' %}>
+            <a style="display:flex;width:170px; height: 24px" onclick="document.forms[1].submit();return false;" class="knopka2" >Создать аккаунт</a>
+            </form> </div></div></body></html>
 <style>
 .Kotiki{
     display: flex;

@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -15,9 +16,15 @@ from saitik3.settings import COUNT_OF_QUESTION
 class RegisterViews(APIView):
     def post(self, request):
         name = request.data.get('name') #при регистрации
+        chek = User.objects.all().filter(username=name)
+        print(chek)
         mail = ''
         password = request.data.get('password')
+        if chek:
+            return render(request, 'регистрация.html')
         User.objects.create_user(name, mail, password)
+        user = authenticate(request, username=name, password=password)
+        login(request, user)
         return redirect('Начало')
 
     def get(self, request):
@@ -71,9 +78,7 @@ def result(answers):
 
 class StartViews(APIView):
     def get(self, request): #request это любые данные, которые передаются в запросе на сервер
-        is_auntificated = False
-        if not is_auntificated:
-            return redirect('Логин')
+
         user_id = 1
         user_test_info = Test.objects.all().get(user_id=user_id)
         if user_test_info.current_question > COUNT_OF_QUESTION:
@@ -100,13 +105,25 @@ class ResultView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        return redirect('Регистрация')
+        name = request.data.get('name')
+        password = request.data.get('password')
+        user = authenticate(request, username=name, password=password)
+        if user is None:
+            return render(request, 'вход.html')
+        else:
+            login(request, user)
+            return redirect('Начало')
 
     def get(self, request):
         return render(request, 'вход.html')
 
-
-
+class CheckView(APIView):
+    def get(self, request):
+        is_auntificated = False
+        if not is_auntificated:
+            return redirect('Логин')
+        else:
+            return redirect('Начало')
 
 
 

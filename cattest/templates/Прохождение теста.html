@@ -13,7 +13,7 @@
          <label> {{textik}} </label>
           <div class = "Image"></div>
            <div class = "answers">
-              <form method = 'post'>
+              <form method = 'post'> {% csrf_token %}
                   <input type="hidden" name="button_answer" value="1" />
                   <a style="width:74px; height: 24px" href="#2" onclick="document.forms[0].submit();return false;" class="knopka2" >Да</a> </form>
                <form method = 'post'>
