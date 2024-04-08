@@ -116,6 +116,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+COUNT_OF_QUESTION = 28
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

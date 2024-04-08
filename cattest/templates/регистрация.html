@@ -8,16 +8,17 @@
     <div class = "Kotiki">
         <div class = "Maintext">  <label class = "Zagolovok">Добро пожаловать </label>
 <label class = "Zagolovok"> на тестирование котиковости <З </label>
-</div> 
+</div>
+        <form method = 'post'>
         <div class =  "Kredi">
-            <label for="name">Зарегистрируйтесь </label>
-            <div class = "Login"> <input type="text" id="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
-            <div class = "Password"> <input type="password" id="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
-          <a href="#" class="knopka">Зарегистрироваться</a>
+            <label>Зарегистрируйтесь </label>
+            <div class = "Login"> <input type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
+            <div class = "Password"> <input type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+          <a href="#" onclick="document.forms[0].submit();return false;" class="knopka">Зарегистрироваться</a>
             <div class = "knopka3"> 
-          <a style="display:flex;width:164px; height: 24px" href="#2" class="knopka2" >Без регистрации</a> 
+          <a style="display:flex;width:164px; height: 24px" href="#2" onclick="document.forms[0].submit();return false;" class="knopka2" >Без регистрации</a>
           <span class="tooltip" data-tooltip="При тестировании без регистрации результаты теста не сохранятся">?</span>  </div>  
-          </div></div></body></html><html>
+          </div> </form> </div></body></html><html>
  
 <style>
 
