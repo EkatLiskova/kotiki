@@ -13,11 +13,13 @@
         <div class =  "Kredi">
             <label>Зарегистрируйтесь </label>
             <form method = 'post'> {% csrf_token %}
+                <input type="hidden" name="button_answer" value="1" />
             <div class = "Login"> <input type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
             <div class = "Password"> <input type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
           <a href="#" onclick="document.forms[0].submit();return false;" class="knopka">Зарегистрироваться</a>
-            </form> <form method = 'get' action={% url 'Начало' %}>
+            </form> <form method = 'post'> {% csrf_token %}
                 <div class = "knopka3">
+                    <input type="hidden" name="button_answer" value="2" />
           <a style="display:flex;width:164px; height: 24px" href="#2" onclick="document.forms[1].submit();return false;" class="knopka2" >Без регистрации</a>
           <span class="tooltip" data-tooltip="При тестировании без регистрации результаты теста не сохранятся">?</span>  </div>  
           </form> </div>  </div></body></html><html>
