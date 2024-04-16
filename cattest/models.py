@@ -4,7 +4,7 @@ from django.db import models
 
 class Test(models.Model):
     '''Информаиця о прохождении тестирования конкретного пользователя'''
-    type_of_kotik = models.IntegerField(null=True) #(null=True) пусто если тест не окончен
+    type_of_kotik = models.CharField(max_length=40, null=True)
     current_question = models.IntegerField(default=1)
     user_id = models.IntegerField(null=False)
     answers = models.CharField(blank=True, max_length=100) #(blank=True) может быть пуста строка
