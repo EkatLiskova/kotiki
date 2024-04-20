@@ -5,9 +5,10 @@
     </head>
     
     <body>
-    <form method = 'delete'> {% csrf_token %}
-    <a onclick="document.forms[0].submit();return false;"> Выйти </a>
-    </form>
+    {% if Anonim == 'not anonim' %}
+    <form method = 'post' action={% url 'Логаут' %}> {% csrf_token %}
+    <a style="cursor: pointer;" onclick="document.forms[0].submit();return false;"> Выйти </a>
+    </form> {% endif %}
     <div class = "Kotiki"> 
       <div class = "result"> 
         <div class = "Maintext">  

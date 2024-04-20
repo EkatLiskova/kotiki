@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cattest.models import Test, Question
+from cattest.models import Test, Question, Result
 from saitik3.settings import COUNT_OF_QUESTION
 
 
@@ -39,6 +39,11 @@ class RegisterViews(APIView):
     def get(self, request):
         return render(request, 'регистрация.html')
 
+def is_anonim(request):
+    if 'Anonim' in str(request.user):
+        return 'anonim'
+    else:
+        return 'not anonim'
 
 class QuestionViews(APIView):
 
@@ -46,18 +51,14 @@ class QuestionViews(APIView):
         id = User.objects.all().get(username=request.user).id
         number_of_question = Test.objects.all().get(user_id=id).current_question
         text_of_question = Question.objects.all().get(number_of_question=number_of_question).text_of_question
-        return {'textik': text_of_question}
-
-    def delete(self, request):
-        logout(request)
-        return redirect('Логин')
+        return text_of_question
 
     def get(self, request):
         id = User.objects.all().get(username=request.user).id
         user_test_info = Test.objects.all().get(user_id=id)
         if user_test_info.current_question > COUNT_OF_QUESTION:
             return redirect('Результат')
-        return render(request, 'Прохождение теста.html', context=self.get_question(request))
+        return render(request, 'Прохождение теста.html', context={'textik':self.get_question(request), 'Anonim': is_anonim(request)})
 
     def post(self, request):
         id = User.objects.all().get(username=request.user).id
@@ -66,11 +67,10 @@ class QuestionViews(APIView):
         user_test_info.answers = user_test_info.answers + button_answer
         user_test_info.current_question = user_test_info.current_question + 1
         user_test_info.save()
-        print(request.user)
         if user_test_info.current_question <= COUNT_OF_QUESTION:
-            return render(request, 'Прохождение теста.html', context=self.get_question(request))
+            return render(request, 'Прохождение теста.html',  context={'textik':self.get_question(request), 'Anonim': is_anonim(request)})
         else:
-            user_test_info.type_of_kotik = result(user_test_info.answers)
+            user_test_info.type_of_kotik = result(user_test_info.answers)[0]
             user_test_info.save()
             return redirect('Результат')
 
@@ -107,7 +107,9 @@ def result(answers):
                       '2212': 'Неугомонный Кексик',
                       '2221': 'Диванный Мурлотень',
                       '2222': 'Уютный затворник'}
-    return result_of_name[answer]
+    name_of_kotik = Result.objects.all().get(number_of_kotik=answer).name_of_kotik
+    number_of_picture = Result.objects.all().get(number_of_kotik=answer).number_of_picture
+    return name_of_kotik, number_of_picture
 
 
 
@@ -120,24 +122,16 @@ class StartViews(APIView):
         elif user_test_info.current_question > 1:
             return redirect('Вопрос')
         else:
-            return render(request, 'Кнопка начала теста.html')
+            return render(request, 'Кнопка начала теста.html', context={'Anonim': is_anonim(request)})
 
-    def delete(self, request):
-        logout(request)
-        return redirect('Логин')
 
 
 class ResultView(APIView):
 
-    def delete(self, request):
-        logout(request)
-        return redirect('Логин')
-
     def get(self, request):
         id = User.objects.all().get(username=request.user).id
         user_test_info = Test.objects.all().get(user_id=id)
-        return render(request, 'Результат теста.html', context={'name_of_kotik': user_test_info.type_of_kotik})
-
+        return render(request, 'Результат теста.html', context={'name_of_kotik': user_test_info.type_of_kotik, 'Picture': Result.objects.all().get(name_of_kotik=user_test_info.type_of_kotik).number_of_picture, 'Anonim':is_anonim(request)})
 
     def post(self, request):
         id = User.objects.all().get(username=request.user).id
@@ -146,10 +140,16 @@ class ResultView(APIView):
         user_test_info.current_question = 1
         user_test_info.type_of_kotik = None
         user_test_info.save()
-        return redirect('Начало')
+        print(request.user)
+
+        if 'Anonim' in str(request.user):
+            return redirect('Логин')
+        else:
+            return redirect('Начало')
 
 
 class LoginView(APIView):
+
     def post(self, request):
         name = request.data.get('name')
         password = request.data.get('password')
@@ -170,6 +170,13 @@ class CheckView(APIView):
             return redirect('Логин')
         else:
             return redirect('Начало')
+
+
+class LogOutView(APIView):
+
+    def post(self, request):
+        logout(request)
+        return redirect('Логин')
 
 
 
