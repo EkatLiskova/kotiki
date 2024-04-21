@@ -5,10 +5,11 @@
     </head>
     
     <body>
-    {% if Anonim == 'not anonim' %}
      <form method = 'post' action={% url 'Логаут' %}> {% csrf_token %}
+     {% if Anonim == 'not anonim' %}
     <a style="cursor: pointer;" onclick="document.forms[0].submit();return false;"> Выйти </a>
-    </form> {% endif %}
+     {% endif %}
+    </form>
     <div class = "Kotiki">
         <div class = "Maintext">  <label class = "Zagolovok">Какой ты котик? </label>
 </div> 

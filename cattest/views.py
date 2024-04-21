@@ -16,7 +16,7 @@ from saitik3.settings import COUNT_OF_QUESTION
 class RegisterViews(APIView):
     def post(self, request):
         button_answer = request.data.get('button_answer')
-        if button_answer == 1:
+        if button_answer == '1':
             name = request.data.get('name') #при регистрации
             chek = User.objects.all().filter(username=name)
             password = request.data.get('password')
@@ -91,22 +91,6 @@ def result(answers):
     is_active = '1' if active.count('1') > 3 else '2'
     is_communication = '1' if communication.count('1') > 3 else '2'
     answer = baza + is_active + is_communication
-    result_of_name = {'1111': 'Домашний пумба',
-                      '1112': 'Сладкий пирожок',
-                      '1121': 'Мягонький кексик',
-                      '1122': 'Водяной подкрадун',
-                      '1211': 'Социальный круглун',
-                      '1212': 'Комнатный летун',
-                      '1221': 'Лучезарный Плюш',
-                      '1222': 'Тихий Гурман',
-                      '2111': '????????',
-                      '2112': 'Красивый Шпион',
-                      '2121': 'Лев Зверей',
-                      '2122': 'Надушенный Пиончик',
-                      '2211': 'Дружелюбный Мурчун',
-                      '2212': 'Неугомонный Кексик',
-                      '2221': 'Диванный Мурлотень',
-                      '2222': 'Уютный затворник'}
     name_of_kotik = Result.objects.all().get(number_of_kotik=answer).name_of_kotik
     number_of_picture = Result.objects.all().get(number_of_kotik=answer).number_of_picture
     return name_of_kotik, number_of_picture
@@ -131,7 +115,10 @@ class ResultView(APIView):
     def get(self, request):
         id = User.objects.all().get(username=request.user).id
         user_test_info = Test.objects.all().get(user_id=id)
-        return render(request, 'Результат теста.html', context={'name_of_kotik': user_test_info.type_of_kotik, 'Picture': Result.objects.all().get(name_of_kotik=user_test_info.type_of_kotik).number_of_picture, 'Anonim':is_anonim(request)})
+        return render(request, 'Результат теста.html',
+                      context={'name_of_kotik': user_test_info.type_of_kotik,
+                               'Picture': Result.objects.all().get(name_of_kotik=user_test_info.type_of_kotik).number_of_picture,
+                               'Anonim':is_anonim(request)})
 
     def post(self, request):
         id = User.objects.all().get(username=request.user).id

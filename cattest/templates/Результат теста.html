@@ -5,17 +5,18 @@
     </head>
     
     <body>
-    {% if Anonim == 'not anonim' %}
      <form method = 'post' action={% url 'Логаут' %}> {% csrf_token %}
+     {% if Anonim == 'not anonim' %}
     <a style="cursor: pointer;" onclick="document.forms[0].submit();return false;"> Выйти </a>
-    </form> {% endif %}
+     {% endif %}
+    </form>
     <div class = "Kotiki"> 
       <div class = "result"> 
         <div class = "Maintext">  
-            <label class = "Zagolovok">Какой ты котик? </label>
+            <label class = "Zagolovok">Результат </label>
 </div>
         <label> {{name_of_kotik}} </label>
-          <div class = "Image"></div>
+          <div class = "Image" style="background-image: url(./{{Picture}}.jpg);"></div>
             <form method = 'post'> {% csrf_token %}
             <a style="display:flex;width:164px; height: 24px" href="#2" onclick="document.forms[1].submit();return false;" class="knopka2" >Пройти снова</a></form>
           </div> 
@@ -68,7 +69,6 @@ label.Zagolovok{
 
 .Image{
   margin-top: .3%;
-  background-image: url(https://sportishka.com/uploads/posts/2022-11/1667524638_36-sportishka-com-p-kot-na-parashyute-oboi-49.jpg);
   width: 80%;
   height: 49%;
   background-size: contain;
