@@ -16,7 +16,8 @@
             <label class = "Zagolovok">Результат </label>
 </div>
         <label> {{name_of_kotik}} </label>
-          <div class = "Image" style="background-image: url(./{{Picture}}.jpg);"></div>
+          {% load static %}
+          <div class = "Image" style="background-image: url({% static Picture %});"></div>
             <form method = 'post'> {% csrf_token %}
             <a style="display:flex;width:164px; height: 24px" href="#2" onclick="document.forms[1].submit();return false;" class="knopka2" >Пройти снова</a></form>
           </div> 

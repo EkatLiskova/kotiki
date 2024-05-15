@@ -12,25 +12,46 @@
 
         <div class =  "Kredi">
             <label for="name">Вход Котики</label>
-            <form method = 'post'> {% csrf_token %}  /* <- механизм защиты*/
-            <div class = "Login"> <input type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
-            <div class = "Password"> <input type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+            <form method = 'post'> {% csrf_token %}  <!--  <- механизм защиты -->
+                {% if Not_User == 'red' %}
+            <div class = "Login"> <input class="kredi2" type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
+            <div class = "Password"> <input class="kredi2" type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+                {% else %}
 
+            <div class = "Login"> <input  type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
+            <div class = "Password"> <input  type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+                {% endif %}
             <a onclick="document.forms[0].submit();return false;" class="knopka">Войти</a>
               </form> <form method = 'get' action={% url 'Регистрация' %}>
             <a style="display:flex;width:170px; height: 24px" onclick="document.forms[1].submit();return false;" class="knopka2" >Создать аккаунт</a>
             </form> </div></div></body></html>
 <style>
+
+input.kredi2 {
+  background-color: red;
+  animation: colorChange 2s;
+  opacity: .7
+}
+
+@keyframes colorChange {
+  0% {
+    background-color: red;
+    opacity: .7
+  }
+  100% {
+    background-color: initial;
+  }
+}
+
+
 .Kotiki{
     display: flex;
     align-items: center;
-    
     flex-direction: column;
     background-size: cover;
     width: 100%;
     height: 600px;
     background-image: url('https://gas-kvas.com/uploads/posts/2023-03/1678092902_gas-kvas-com-p-krasivii-fon-na-risunke-kota-5.jpg');
- 
 }
 
 .Maintext{

@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -45,22 +45,23 @@ def is_anonim(request):
     else:
         return 'not anonim'
 
+
 class QuestionViews(APIView):
 
-    def get_question(self, request):
+    def get_question(self, request): #текст вопроса
         id = User.objects.all().get(username=request.user).id
         number_of_question = Test.objects.all().get(user_id=id).current_question
         text_of_question = Question.objects.all().get(number_of_question=number_of_question).text_of_question
         return text_of_question
 
-    def get(self, request):
+    def get(self, request):#загружается стартовая стр вопросиков
         id = User.objects.all().get(username=request.user).id
         user_test_info = Test.objects.all().get(user_id=id)
         if user_test_info.current_question > COUNT_OF_QUESTION:
             return redirect('Результат')
-        return render(request, 'Прохождение теста.html', context={'textik':self.get_question(request), 'Anonim': is_anonim(request)})
+        return render(request, 'Прохождение теста.html', context={'textik': self.get_question(request), 'Anonim': is_anonim(request)})
 
-    def post(self, request):
+    def post(self, request): #ответы Да/Нет, обновляется только текст
         id = User.objects.all().get(username=request.user).id
         user_test_info = Test.objects.all().get(user_id=id)
         button_answer = request.data.get('button_answer')
@@ -68,11 +69,11 @@ class QuestionViews(APIView):
         user_test_info.current_question = user_test_info.current_question + 1
         user_test_info.save()
         if user_test_info.current_question <= COUNT_OF_QUESTION:
-            return render(request, 'Прохождение теста.html',  context={'textik':self.get_question(request), 'Anonim': is_anonim(request)})
+            return JsonResponse({'textik': self.get_question(request)})
         else:
-            user_test_info.type_of_kotik = result(user_test_info.answers)[0]
+            user_test_info.type_of_kotik = result(user_test_info.answers)
             user_test_info.save()
-            return redirect('Результат')
+            return JsonResponse({'redirect': 'Результат'})
 
 
 def result(answers):
@@ -92,8 +93,7 @@ def result(answers):
     is_communication = '1' if communication.count('1') > 3 else '2'
     answer = baza + is_active + is_communication
     name_of_kotik = Result.objects.all().get(number_of_kotik=answer).name_of_kotik
-    number_of_picture = Result.objects.all().get(number_of_kotik=answer).number_of_picture
-    return name_of_kotik, number_of_picture
+    return name_of_kotik
 
 
 
@@ -109,7 +109,6 @@ class StartViews(APIView):
             return render(request, 'Кнопка начала теста.html', context={'Anonim': is_anonim(request)})
 
 
-
 class ResultView(APIView):
 
     def get(self, request):
@@ -117,8 +116,8 @@ class ResultView(APIView):
         user_test_info = Test.objects.all().get(user_id=id)
         return render(request, 'Результат теста.html',
                       context={'name_of_kotik': user_test_info.type_of_kotik,
-                               'Picture': Result.objects.all().get(name_of_kotik=user_test_info.type_of_kotik).number_of_picture,
-                               'Anonim':is_anonim(request)})
+                               'Picture': str(Result.objects.all().get(name_of_kotik=user_test_info.type_of_kotik).number_of_picture) + '.jpg',
+                               'Anonim': is_anonim(request)})
 
     def post(self, request):
         id = User.objects.all().get(username=request.user).id
@@ -142,7 +141,7 @@ class LoginView(APIView):
         password = request.data.get('password')
         user = authenticate(request, username=name, password=password)
         if user is None:
-            return render(request, 'вход.html')
+            return render(request, 'вход.html', context={'Not_User': 'red'})
         else:
             login(request, user)
             return redirect('Начало')
@@ -164,6 +163,8 @@ class LogOutView(APIView):
     def post(self, request):
         logout(request)
         return redirect('Логин')
+
+
 
 
 

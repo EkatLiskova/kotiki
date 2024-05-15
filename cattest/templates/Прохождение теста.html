@@ -5,10 +5,11 @@
     </head>
     
     <body>
-    <audio autoplay> <source src="{%static maw.mp3%}"> </audio>
+    {% load static %}
+    <audio autoplay loop> <source src={% static 'maw.mp3' %}> </audio>
     <form method = 'post' action={% url 'Логаут' %}> {% csrf_token %}
     {% if Anonim == 'not anonim' %}
-    <a style="cursor: pointer;" onclick="document.forms[0].submit();return false;"> Выйти </a>
+    <a style="cursor: pointer;" onclick="document.forms[0].submit();return false;" class="LogOut"> Выйти </a>
     {% endif %}
     </form>
     <div class = "Kotiki"> 
@@ -16,15 +17,57 @@
         <div class = "Maintext">  
             <label class = "Zagolovok">Какой ты котик? </label>
 </div>
-         <label> {{textik}} </label>
-          <div class = "Image"></div>
+         <label id='textik'> {{textik}} </label>
+          <div class = "Image" id='Image_id'></div>
            <div class = "answers">
-              <form method = 'post'> {% csrf_token %}
-                  <input type="hidden" name="button_answer" value="1" />
-                  <a style="width:74px; height: 24px" href="#2" onclick="document.forms[1].submit();return false;" class="knopka2" >Да</a> </form>
-               <form method = 'post'> {% csrf_token %}
-                   <input type="hidden" name="button_answer" value="2" />
-                   <a style="width:74px; margin-left: 14px; height: 24px" href="#2" onclick="document.forms[2].submit();return false;" class="knopka2" >Нет</a> </form>
+                  <a style="width:74px; height: 24px" href="#2" id='button1' class="knopka2" >Да</a>
+                  <a style="width:74px; margin-left: 14px; height: 24px" href="#2" id='button2' class="knopka2" >Нет</a>
+               <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            $('#button1').on('click', function() {
+                var formData = new FormData();
+                formData.append('button_answer', '1');
+                formData.append('csrfmiddlewaretoken', "{{ csrf_token }}")
+
+                $.ajax({
+                    url: {% url 'Вопрос' %},
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.textik) {
+                            $('#textik').text(response.textik);
+                        } else {
+                            window.location.href = {% url 'Результат' %};
+                        }
+                    }
+                });
+            });
+
+            $('#button2').on('click', function() {
+                var formData = new FormData();
+                formData.append('button_answer', '2');
+                formData.append('csrfmiddlewaretoken', "{{ csrf_token }}")
+
+                $.ajax({
+                    url: {% url 'Вопрос' %},
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.textik) {
+                            $('#textik').text(response.textik);
+                        } else {
+                            window.location.href = {% url 'Результат' %};
+                        }
+                    }
+                });
+            });
+        });
+    </script>
            </div>
           </div> 
 </div>  

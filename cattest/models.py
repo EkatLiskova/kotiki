@@ -22,7 +22,7 @@ class Question(models.Model):
         db_table = 'question'
 
 
-class Result(models.Model):
+class Result(models.Model): #
     name_of_kotik = models.TextField(blank=True, null=True)
     number_of_kotik = models.IntegerField()
     number_of_picture = models.IntegerField()
