@@ -12,19 +12,91 @@
 
         <div class =  "Kredi">
             <label>Зарегистрируйтесь </label>
+                <div class = "Login"> <input id="login" type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
+                <div class = "Password"> <input id="password" type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+                <a id="button" class="knopka">Зарегистрироваться</a>
             <form method = 'post'> {% csrf_token %}
-                <input type="hidden" name="button_answer" value="1" />
-            <div class = "Login"> <input type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
-            <div class = "Password"> <input type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
-          <a href="#" onclick="document.forms[0].submit();return false;" class="knopka">Зарегистрироваться</a>
-            </form> <form method = 'post'> {% csrf_token %}
                 <div class = "knopka3">
                     <input type="hidden" name="button_answer" value="2" />
-          <a style="display:flex;width:164px; height: 24px" href="#2" onclick="document.forms[1].submit();return false;" class="knopka2" >Без регистрации</a>
+          <a style="display:flex;width:164px; height: 24px" href="#2" onclick="document.forms[0].submit();return false;" class="knopka2" >Без регистрации</a>
           <span class="tooltip" data-tooltip="При тестировании без регистрации результаты теста не сохранятся">?</span>  </div>  
           </form> </div>  </div></body></html><html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            $('#button').on('click', function() {
+                var formData = new FormData();
+                var username = $('input[name=name]').val();
+                var password = $('input[name=password]').val();
+                formData.append('name', username);
+                formData.append('password', password);
+                formData.append('button_answer', '1');
+                formData.append('csrfmiddlewaretoken', "{{ csrf_token }}")
+
+                $.ajax({
+                    url: {% url 'Регистрация' %},
+                    type: 'POST',
+                    data: formData,
+                    beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+    },
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response == 'red') {
+                            $('input').val('');
+
+                            var inputField1 = document.getElementById('login');
+                            var inputField2 = document.getElementById('password');
+                            // Если уже идет анимация, сбросить её
+                                inputField1.classList.remove('kredi2');
+                                    inputField2.classList.remove('kredi2');
+                                void inputField1.offsetWidth;
+                                void inputField2.offsetWidth;
+
+
+                                // Добавить класс для запуска анимации
+                                inputField1.classList.add('kredi2');
+                                inputField2.classList.add('kredi2');
+
+
+                        }
+                        else
+                        {
+                            window.location.href = {% url 'Начало' %};
+                        }
+
+                    }
+                });
+            });
+
+
+        });
+       </script>
  
 <style>
+
+.kredi2 {
+    background-color: rgba(255, 0, 0, 0.5); /* Прозрачный красный цвет */
+    animation: backgroundChange 3s forwards; /* Плавная анимация */
+}
+
+.kredi2:focus {
+    background-color: white; /* Белый цвет при фокусе */
+}
+
+@keyframes backgroundChange {
+  /* можно назвать "шаг 1" */
+  0% {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  /* можно назвать "шаг 2" */
+  100% {
+    background-color: white;
+  }
+}
+
 
 .Kotiki{
     display: flex;
@@ -33,7 +105,7 @@
     flex-direction: column;
     background-size: cover;
     width: 100%;
-    height: 600px;
+    height: 100%;
     background-image: url('https://gas-kvas.com/uploads/posts/2023-03/1678092902_gas-kvas-com-p-krasivii-fon-na-risunke-kota-5.jpg');
  
 }

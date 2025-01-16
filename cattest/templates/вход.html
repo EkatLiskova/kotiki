@@ -12,34 +12,87 @@
 
         <div class =  "Kredi">
             <label for="name">Вход Котики</label>
-            <form method = 'post'> {% csrf_token %}  <!--  <- механизм защиты -->
-                {% if Not_User == 'red' %}
-            <div class = "Login"> <input class="kredi2" type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
-            <div class = "Password"> <input class="kredi2" type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
-                {% else %}
-
-            <div class = "Login"> <input  type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
-            <div class = "Password"> <input  type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
-                {% endif %}
-            <a onclick="document.forms[0].submit();return false;" class="knopka">Войти</a>
-              </form> <form method = 'get' action={% url 'Регистрация' %}>
-            <a style="display:flex;width:170px; height: 24px" onclick="document.forms[1].submit();return false;" class="knopka2" >Создать аккаунт</a>
+            <div class = "Login"> <input id = "login" type="text" name="name" required minlength="3" maxlength="20" size="auto" placeholder="Логин" /></div>
+            <div class = "Password"> <input id = "password" type="password" name="password" required minlength="3" maxlength="20" size="auto" placeholder="Пароль"/></div>
+            <a class="knopka" id = "button">Войти</a>
+              <form method = 'get' action={% url 'Регистрация' %}>
+            <a style="display:flex;width:170px; height: 24px" onclick="document.forms[0].submit();return false;" class="knopka2" >Создать аккаунт</a>
             </form> </div></div></body></html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+            $('#button').on('click', function() {
+                var formData = new FormData();
+                var username = $('input[name=name]').val();
+                var password = $('input[name=password]').val();
+                formData.append('name', username);
+                formData.append('password', password);
+                formData.append('csrfmiddlewaretoken', "{{ csrf_token }}")
+
+                $.ajax({
+                    url: {% url 'Логин' %},
+                    type: 'POST',
+                    data: formData,
+                    beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+    },
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response == 'red') {
+                            $('input').val('');
+
+                            var inputField1 = document.getElementById('login');
+                            var inputField2 = document.getElementById('password');
+// Если уже идет анимация, сбросить её
+    inputField1.classList.remove('kredi2');
+        inputField2.classList.remove('kredi2');
+    void inputField1.offsetWidth;
+    void inputField2.offsetWidth;
+
+
+    // Добавить класс для запуска анимации
+    inputField1.classList.add('kredi2');
+    inputField2.classList.add('kredi2');
+
+    // Удалить класс через 5 секунд
+
+                        }
+                        else
+                        {
+                            window.location.href = {% url 'Начало' %};
+                        }
+
+                    }
+                });
+            });
+
+
+        });
+    </script>
+
+
 <style>
 
-input.kredi2 {
-  background-color: red;
-  animation: colorChange 2s;
-  opacity: .7
+
+
+.kredi2 {
+    background-color: rgba(255, 0, 0, 0.5); /* Прозрачный красный цвет */
+    animation: backgroundChange 3s forwards; /* Плавная анимация */
 }
 
-@keyframes colorChange {
+.kredi2:focus {
+    background-color: white; /* Белый цвет при фокусе */
+}
+
+@keyframes backgroundChange {
+  /* можно назвать "шаг 1" */
   0% {
-    background-color: red;
-    opacity: .7
+    background-color: rgba(255, 0, 0, 0.5);
   }
+  /* можно назвать "шаг 2" */
   100% {
-    background-color: initial;
+    background-color: white;
   }
 }
 
@@ -50,7 +103,7 @@ input.kredi2 {
     flex-direction: column;
     background-size: cover;
     width: 100%;
-    height: 600px;
+    height: 100%;
     background-image: url('https://gas-kvas.com/uploads/posts/2023-03/1678092902_gas-kvas-com-p-krasivii-fon-na-risunke-kota-5.jpg');
 }
 
@@ -107,7 +160,7 @@ a.knopka {
   background: rgb(250, 240, 247); /* фон кнопки */
   padding: .2em 1.0em; /* отступ от текста */
   outline: none; /* убирать контур в Mozilla */
-} 
+}
 a.knopka:hover { background: rgb(250, 237, 246); } /* при наведении курсора мышки */
 a.knopka:active { background: rgb(247, 225, 241); } /* при нажатии */
 
@@ -123,9 +176,9 @@ a.knopka2 {
   padding-top: 3px;
   padding-bottom: 4px;
   outline: none; /* убирать контур в Mozilla */
-  
-} 
-a.knopka2:hover { 
+
+}
+a.knopka2:hover {
   background: rgba(250, 237, 246, .91);
 } /* при наведении курсора мышки */
 a.knopka2:active { background: rgba(247, 225, 241, .91); } /* при нажатии */

@@ -1,7 +1,9 @@
+import pytz
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+import datetime
 
 # Create your views here.
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -16,28 +18,54 @@ from saitik3.settings import COUNT_OF_QUESTION
 class RegisterViews(APIView):
     def post(self, request):
         button_answer = request.data.get('button_answer')
-        if button_answer == '1':
-            name = request.data.get('name') #при регистрации
-            chek = User.objects.all().filter(username=name)
-            password = request.data.get('password')
-            if chek:#TODO: сделать в html уведомление о том, что такой логин уже существует
-                return render(request, 'регистрация.html')
-        else:#cоздание анонимного пользователя #TODO: сделать, чтобы анонимус удалялся
-            colvo_of_user = len(User.objects.all())
-            name = 'Anonim' + str(colvo_of_user)
-            chek1 = User.objects.all().filter(username=name)
-            if chek1:
-                name = name + 'povtor'
-            password = name
-        User.objects.create_user(name, '', password)# '' это типа маил
-        id = User.objects.all().get(username=name).id
-        Test.objects.create(type_of_kotik=None, current_question=1, user_id=id, answers='')
-        user = authenticate(request, username=name, password=password)
-        login(request, user)
+        try:
+            if button_answer == '1':
+                name = request.data.get('name') #при регистрации
+                chek = User.objects.all().filter(username=name)
+                password = request.data.get('password')
+                if chek or 'Anonim' in name:#TODO: сделать в html уведомление о том, что такой логин уже существует
+                    return HttpResponse('red')
+            else:#cоздание анонимного пользователя
+                colvo_of_user = len(User.objects.all())
+                name = 'Anonim' + str(colvo_of_user)
+                chek1 = User.objects.all().filter(username=name)
+                if chek1:
+                    name = name + 'povtor'
+                password = name
+                delete_anonim()
+
+            User.objects.create_user(name, '', password)# '' это типа маил
+            id = User.objects.all().get(username=name).id
+            Test.objects.create(type_of_kotik=None, current_question=1, user_id=id, answers='')
+            user = authenticate(request, username=name, password=password)
+            login(request, user)
+            if button_answer == '1':
+                return HttpResponse('green')
+        except:
+            return HttpResponse('red')
         return redirect('Начало')
 
     def get(self, request):
         return render(request, 'регистрация.html')
+
+
+def delete_anonim():
+    d_anonim = User.objects.all().filter(username__contains='Anonim')
+    for i in d_anonim:
+        date1 = i.date_joined
+        date2 = datetime.datetime.now()
+        tz = pytz.timezone('Europe/Moscow')
+        date2 = tz.localize(date2)
+        print(date1, type(date1))
+        print(date2, type(date2))
+        dif = date2 - date1
+        if dif.days > 1:
+            print(i.id)
+            test = Test.objects.all().get(user_id=i.id)
+            print('okay')
+            test.delete()
+            i.delete()
+
 
 def is_anonim(request):
     if 'Anonim' in str(request.user):
@@ -54,9 +82,12 @@ class QuestionViews(APIView):
         text_of_question = Question.objects.all().get(number_of_question=number_of_question).text_of_question
         return text_of_question
 
-    def get(self, request):#загружается стартовая стр вопросиков
-        id = User.objects.all().get(username=request.user).id
-        user_test_info = Test.objects.all().get(user_id=id)
+    def get(self, request):#загружается стр вопросиков
+        try:
+            id = User.objects.all().get(username=request.user).id
+            user_test_info = Test.objects.all().get(user_id=id)
+        except:
+            return redirect('Логин')
         if user_test_info.current_question > COUNT_OF_QUESTION:
             return redirect('Результат')
         return render(request, 'Прохождение теста.html', context={'textik': self.get_question(request), 'Anonim': is_anonim(request)})
@@ -99,8 +130,11 @@ def result(answers):
 
 class StartViews(APIView):
     def get(self, request): #request это любые данные, которые передаются в запросе на сервер
-        id = User.objects.all().get(username=request.user).id
-        user_test_info = Test.objects.all().get(user_id=id)
+        try:
+            id = User.objects.all().get(username=request.user).id
+            user_test_info = Test.objects.all().get(user_id=id)
+        except:
+            return redirect('Логин')
         if user_test_info.current_question > COUNT_OF_QUESTION:
             return redirect('Результат')
         elif user_test_info.current_question > 1:
@@ -112,8 +146,11 @@ class StartViews(APIView):
 class ResultView(APIView):
 
     def get(self, request):
-        id = User.objects.all().get(username=request.user).id
-        user_test_info = Test.objects.all().get(user_id=id)
+        try:
+            id = User.objects.all().get(username=request.user).id
+            user_test_info = Test.objects.all().get(user_id=id)
+        except:
+            return redirect('Логин')
         return render(request, 'Результат теста.html',
                       context={'name_of_kotik': user_test_info.type_of_kotik,
                                'Picture': str(Result.objects.all().get(name_of_kotik=user_test_info.type_of_kotik).number_of_picture) + '.jpg',
@@ -141,10 +178,10 @@ class LoginView(APIView):
         password = request.data.get('password')
         user = authenticate(request, username=name, password=password)
         if user is None:
-            return render(request, 'вход.html', context={'Not_User': 'red'})
+            return HttpResponse('red')
         else:
             login(request, user)
-            return redirect('Начало')
+            return HttpResponse('green')
 
     def get(self, request):
         return render(request, 'вход.html')
